@@ -1,0 +1,365 @@
+{
+	"info": {
+		"_postman_id": "d67795a1-1f6a-4ebd-aa9f-f94df8d0924f",
+		"name": "Task Manager API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User Register",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"arif@furqansoftware.com\",\n\t\"password\": \"AyNa@6*(\"\n}"
+				},
+				"url": {
+					"raw": "{{HOST}}/api/v1/register",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Access token generate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5fea23fe-1ac7-4e2c-9a9f-9396e60abe29",
+						"exec": [
+							"if (pm.response.code === 200) {",
+							"    pm.environment.set('ACCESS_TOKEN', pm.response.json().access_token)",
+							"    pm.environment.set('REFRESH_TOKEN', pm.response.json().refresh_token)",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "arif@furqansoftware.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "AYNa@6*(",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{CLIENT_ID}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{CLIENT_SECRET}}",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{HOST}}/oauth/token",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"oauth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh token generate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5fea23fe-1ac7-4e2c-9a9f-9396e60abe29",
+						"exec": [
+							"if (pm.response.code === 200) {",
+							"    pm.environment.set('ACCESS_TOKEN', pm.response.json().access_token)",
+							"    pm.environment.set('REFRESH_TOKEN', pm.response.json().refresh_token)",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "{{CLIENT_ID}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{CLIENT_SECRET}}",
+							"type": "text"
+						},
+						{
+							"key": "refresh_token",
+							"value": "{{REFRESH_TOKEN}}",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "refresh_token",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{HOST}}/oauth/token",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"oauth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify Account",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{HOST}}/api/v1/verify/nFcPVddTLzy1ZkLZpUpHDdvqQvFUWWHSCvvwATVSNUeuSy2y",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"verify",
+						"nFcPVddTLzy1ZkLZpUpHDdvqQvFUWWHSCvvwATVSNUeuSy2y"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User resend verification",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"arif@furqansoftware.com\"\n}"
+				},
+				"url": {
+					"raw": "{{HOST}}/api/v1/resend-verify",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"resend-verify"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User send password reset link",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"arif@furqansoftware.com\"\n}"
+				},
+				"url": {
+					"raw": "{{HOST}}/api/v1/send-reset-password",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"send-reset-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User reset password",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"password\": \"AYNa@6*(\"\n}"
+				},
+				"url": {
+					"raw": "{{HOST}}/api/v1/reset-password/Ac5iFShwZUVbLjhaVyVOeM1qiUmA2LeZtwkNve5SypgINoYZ",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"reset-password",
+						"Ac5iFShwZUVbLjhaVyVOeM1qiUmA2LeZtwkNve5SypgINoYZ"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user information",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{HOST}}/api/v1/me",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"me"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{ACCESS_TOKEN}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "a01287c1-c02d-4794-a2f2-7a9331660891",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "3a3c19c8-adf1-4674-a203-ba7cecb33b5c",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

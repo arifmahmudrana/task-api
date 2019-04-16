@@ -1,0 +1,99 @@
+#!/usr/bin/env node
+const redis = require('redis');
+const fmt = require('util').format;
+const bluebird = require('bluebird');
+
+bluebird.promisifyAll(redis);
+const db = redis.createClient(process.env.REDIS_URL);
+const { formats } = require('../src/models/OAuth');
+
+const accToken = db
+  .scanAsync('0', 'MATCH', fmt(formats.accessToken, '*'))
+  .then(values => {
+    const promises = [];
+    values[1].forEach(key => {
+      const promise = db.hgetallAsync(key).then(result => {
+        if (!result.accessTokenExpiresAt.length) {
+          return db.delAsync(key);
+        }
+
+        try {
+          if (
+            new Date(result.accessTokenExpiresAt).getTime() <
+            new Date().getTime()
+          ) {
+            return db.delAsync(key);
+          }
+        } catch (error) {
+          return db.delAsync(key);
+        }
+      });
+      promises.push(promise);
+    });
+
+    return Promise.all(promises);
+  })
+  .then(values => ({
+    accessToken: fmt(
+      'Removed unused access tokens: %s',
+      values.filter(i => !!i).length
+    )
+  }));
+
+const refToken = db
+  .scanAsync('0', 'MATCH', fmt(formats.refreshToken, '*'))
+  .then(values => {
+    const promises = [];
+    values[1].forEach(key => {
+      const promise = db.hgetallAsync(key).then(result => {
+        if (!result.refreshTokenExpiresAt.length) {
+          return db.delAsync(key);
+        }
+
+        try {
+          if (
+            new Date(result.refreshTokenExpiresAt).getTime() <
+            new Date().getTime()
+          ) {
+            return db.delAsync(key);
+          }
+        } catch (error) {
+          return db.delAsync(key);
+        }
+      });
+      promises.push(promise);
+    });
+
+    return Promise.all(promises);
+  })
+  .then(values => ({
+    refreshToken: fmt(
+      'Removed unused refresh tokens: %s',
+      values.filter(i => !!i).length
+    )
+  }));
+
+Promise.all([accToken, refToken])
+  .then(messages => {
+    let accessToken, refreshToken;
+    messages.forEach(message => {
+      if (message.accessToken) {
+        accessToken = message.accessToken;
+      } else {
+        refreshToken = message.refreshToken;
+      }
+    });
+
+    if (accessToken) {
+      console.log(accessToken);
+    }
+    if (refreshToken) {
+      console.log(refreshToken);
+    }
+
+    process.exit(0);
+  })
+  .catch(err => {
+    console.log('Error occured: ', err);
+    process.exit(1);
+  });

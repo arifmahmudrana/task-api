@@ -1,0 +1,32 @@
+{
+  "name": "task-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "env-cmd ./.env nodemon src/app.js",
+    "debug": "env-cmd ./.env nodemon --inspect-brk src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "bluebird": "^3.5.4",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "express-oauth-server": "^2.0.0",
+    "mongoose": "^5.5.0",
+    "redis": "^2.8.0",
+    "validator": "^10.11.0"
+  },
+  "devDependencies": {
+    "env-cmd": "^8.0.2",
+    "nodemon": "^1.18.11"
+  },
+  "engines": {
+    "node": ">= 11.0.0"
+  }
+}
