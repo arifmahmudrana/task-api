@@ -75,16 +75,28 @@ const userSchema = new Schema(fields);
 }; */
 
 userSchema.statics.findByCredentials = async function(email, password) {
+  console.log('==================email==================');
+  console.log(email);
+  console.log('==================email==================');
+  console.log('==================password==================');
+  console.log(password);
+  console.log('==================password==================');
   const user = await this.findOne({
     email,
     verified: true
   });
+  console.log('==================user==================');
+  console.log(user);
+  console.log('==================user==================');
 
   if (!user) {
     return false;
   }
 
   const matched = await bcrypt.compare(password, user.password.toString());
+  console.log('==================matched==================');
+  console.log(matched);
+  console.log('==================matched==================');
 
   if (!matched) {
     return false;
