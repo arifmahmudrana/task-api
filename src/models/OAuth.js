@@ -86,17 +86,8 @@ module.exports.revokeToken = token =>
  * Get user.
  */
 
-module.exports.getUser = (username, password) => {
-  console.log('==================username==================');
-  console.log(username);
-  console.log('==================username==================');
-  console.log('==================password==================');
-  console.log(password);
-  console.log('==================password==================');
-  return User.findByCredentials(username, password).then(user => {
-    console.log('==================user==================');
-    console.log(user);
-    console.log('==================user==================');
+module.exports.getUser = (username, password) =>
+  User.findByCredentials(username, password).then(user => {
     if (!user) {
       return false;
     }
@@ -105,7 +96,6 @@ module.exports.getUser = (username, password) => {
       id: user._id.toString()
     };
   });
-};
 
 /**
  * Save token.

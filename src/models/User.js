@@ -17,13 +17,14 @@ const fields = {
     }
   },
   password: {
-    type: Buffer,
+    type: String,
     required: [true, 'Password is required'],
-    validate(v) {
-      const value = v.toString();
-      if (value.length < 7) {
-        throw new Error('Password length must be greater then 7 character');
-      }
+    minlength: [7, 'Password length must be greater then 7 character'],
+    match: [
+      /^(?=.*[A-Z])(?=.*[0-9])/,
+      'Password must include a number & capital letter'
+    ],
+    validate(value) {
       const spChar = ' !"#$%&\'()*+,-./:;<=>?@[]^_`{|}~';
       let found = false;
       for (let i = 0; i < spChar.length; i++) {
@@ -36,12 +37,6 @@ const fields = {
       if (!found) {
         throw new Error('Password must include a special character');
       }
-      if (!value.match(/[0-9]/g)) {
-        throw new Error('Password must include a number');
-      }
-      if (!value.match(/[A-Z]/g)) {
-        throw new Error('Password must include a capital letter');
-      }
     }
   },
   verified: {
@@ -50,15 +45,21 @@ const fields = {
   },
   reset: {
     token: {
-      type: Buffer
+      type: String,
+      default: null
     },
-    expires: Date
+    expires: {
+      type: Date,
+      default: null
+    }
   },
   verifyToken: {
-    type: Buffer
+    type: String,
+    default: null
   },
   verifyTokenExpires: {
-    type: Date
+    type: Date,
+    default: null
   }
 };
 const userSchema = new Schema(fields);
@@ -75,28 +76,16 @@ const userSchema = new Schema(fields);
 }; */
 
 userSchema.statics.findByCredentials = async function(email, password) {
-  console.log('==================email==================');
-  console.log(email);
-  console.log('==================email==================');
-  console.log('==================password==================');
-  console.log(password);
-  console.log('==================password==================');
   const user = await this.findOne({
     email,
     verified: true
   });
-  console.log('==================user==================');
-  console.log(user);
-  console.log('==================user==================');
 
   if (!user) {
     return false;
   }
 
-  const matched = await bcrypt.compare(password, user.password.toString());
-  console.log('==================matched==================');
-  console.log(matched);
-  console.log('==================matched==================');
+  const matched = await bcrypt.compare(password, user.password);
 
   if (!matched) {
     return false;
@@ -128,7 +117,7 @@ userSchema.methods.setVerified = function() {
 // Hash the plain text password before saving
 userSchema.pre('save', async function(next) {
   if (this.isModified('password')) {
-    this.password = await bcrypt.hash(this.password.toString(), 8);
+    this.password = await bcrypt.hash(this.password, 8);
   }
 
   if (this.isModified('reset.token') && this.reset.token) {
