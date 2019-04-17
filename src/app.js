@@ -1,4 +1,5 @@
 const OAuthServer = require('express-oauth-server');
+const UnauthorizedRequestError = require('oauth2-server/lib/errors/unauthorized-request-error');
 const mongoose = require('mongoose');
 if (process.env.NODE_ENV === 'development') {
   mongoose.set('debug', true);
@@ -11,7 +12,8 @@ const port = process.env.PORT || 3000;
 const app = express();
 
 const oAuthOptions = {
-  model: require('./models/OAuth')
+  model: require('./models/OAuth'),
+  useErrorHandler: true
 };
 if (process.env.NODE_ENV === 'development') {
   oAuthOptions.accessTokenLifetime =
@@ -43,7 +45,13 @@ app.use((err, req, res, next) => {
     console.log('====================================');
   }
 
-  res.status(err.status || 500).json({
+  res.status(err.status || 500);
+
+  if (err instanceof UnauthorizedRequestError) {
+    return res.send();
+  }
+
+  res.json({
     error: err.message
   });
 });
