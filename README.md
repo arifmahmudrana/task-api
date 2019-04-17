@@ -30,5 +30,9 @@ npm start
 ```
 
 [demo-live](https://task-api-rana.herokuapp.com/)
+```
+demo CLIENT_ID - dixDTqxxBsd8x9un
+demo CLIENT_SECRET - (D\ZJVeP?%ZdA[dJ=?\h%r*D^=g(,n/Z
+```
 
 ## Need redis, mongo & node version >= 11
