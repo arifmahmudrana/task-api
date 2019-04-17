@@ -7,14 +7,21 @@ bluebird.promisifyAll(redis);
 const db = redis.createClient(process.env.REDIS_URL);
 const { formats } = require('../src/models/OAuth');
 
-const accToken = db
-  .scanAsync('0', 'MATCH', fmt(formats.accessToken, '*'))
+let accessTokenKeys = [];
+const getAllAccessTokens = (cursor = 0) =>
+  db.scanAsync(cursor, 'MATCH', fmt(formats.accessToken, '*')).then(result => {
+    accessTokenKeys = [...accessTokenKeys, ...result[1]];
+    if (result[0] === '0') return accessTokenKeys;
+    return getAllAccessTokens(result[0]);
+  });
+const accToken = getAllAccessTokens()
   .then(values => {
     const promises = [];
-    values[1].forEach(key => {
-      const promise = db.hgetallAsync(key).then(result => {
+    values.forEach(key => {
+      const promise = db.getAsync(key).then(result => {
+        result = JSON.parse(result);
         if (!result.accessTokenExpiresAt.length) {
-          return db.delAsync(key);
+          return key;
         }
 
         try {
@@ -22,10 +29,10 @@ const accToken = db
             new Date(result.accessTokenExpiresAt).getTime() <
             new Date().getTime()
           ) {
-            return db.delAsync(key);
+            return key;
           }
         } catch (error) {
-          return db.delAsync(key);
+          return key;
         }
       });
       promises.push(promise);
@@ -33,21 +40,23 @@ const accToken = db
 
     return Promise.all(promises);
   })
-  .then(values => ({
-    accessToken: fmt(
-      'Removed unused access tokens: %s',
-      values.filter(i => !!i).length
-    )
-  }));
+  .then(keys => keys.filter(k => !!k));
 
-const refToken = db
-  .scanAsync('0', 'MATCH', fmt(formats.refreshToken, '*'))
+let refreshTokenKeys = [];
+const getAllRefreshTokens = (cursor = 0) =>
+  db.scanAsync(cursor, 'MATCH', fmt(formats.refreshToken, '*')).then(result => {
+    refreshTokenKeys = [...refreshTokenKeys, ...result[1]];
+    if (result[0] === '0') return refreshTokenKeys;
+    return getAllRefreshTokens(result[0]);
+  });
+const refToken = getAllRefreshTokens()
   .then(values => {
     const promises = [];
-    values[1].forEach(key => {
-      const promise = db.hgetallAsync(key).then(result => {
+    values.forEach(key => {
+      const promise = db.getAsync(key).then(result => {
+        result = JSON.parse(result);
         if (!result.refreshTokenExpiresAt.length) {
-          return db.delAsync(key);
+          return key;
         }
 
         try {
@@ -55,10 +64,10 @@ const refToken = db
             new Date(result.refreshTokenExpiresAt).getTime() <
             new Date().getTime()
           ) {
-            return db.delAsync(key);
+            return key;
           }
         } catch (error) {
-          return db.delAsync(key);
+          return key;
         }
       });
       promises.push(promise);
@@ -66,32 +75,21 @@ const refToken = db
 
     return Promise.all(promises);
   })
-  .then(values => ({
-    refreshToken: fmt(
-      'Removed unused refresh tokens: %s',
-      values.filter(i => !!i).length
-    )
-  }));
+  .then(keys => keys.filter(k => !!k));
 
 Promise.all([accToken, refToken])
-  .then(messages => {
-    let accessToken, refreshToken;
-    messages.forEach(message => {
-      if (message.accessToken) {
-        accessToken = message.accessToken;
-      } else {
-        refreshToken = message.refreshToken;
-      }
+  .then(keys => [...new Set([...keys[0], ...keys[1]])])
+  .then(keys => {
+    if (!keys.length) {
+      console.log('No unused tokens found!!');
+      process.exit(0);
+      return;
+    }
+    console.log('Removing unused tokens: ', keys.join());
+    return db.delAsync(keys).then(total => {
+      console.log('Total tokens removed: ', total);
+      process.exit(0);
     });
-
-    if (accessToken) {
-      console.log(accessToken);
-    }
-    if (refreshToken) {
-      console.log(refreshToken);
-    }
-
-    process.exit(0);
   })
   .catch(err => {
     console.log('Error occured: ', err);
