@@ -9,5 +9,9 @@ module.exports = error => {
     }
   }
 
+  if (error.name === 'MongoError') {
+    return customErr('Email allready exists!', 422);
+  }
+
   return error;
 };
