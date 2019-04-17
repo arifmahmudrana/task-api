@@ -30,9 +30,11 @@ app.use(express.urlencoded({ extended: false }));
 const auth = require('./routes/auth');
 const user = require('./routes/user');
 
+const userMiddlewares = require('./middlewares/user');
+
 app.use('/api/v1', auth);
 app.post('/oauth/token', app.oauth.token());
-app.use('/api/v1', app.oauth.authenticate(), user);
+app.use('/api/v1/me', app.oauth.authenticate(), userMiddlewares.findById, user);
 
 app.use((req, res, next) => {
   next(require('./utils/err')('Not Found', 404));
