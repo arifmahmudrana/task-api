@@ -26,11 +26,12 @@ module.exports.formats = formats;
  */
 
 module.exports.getAccessToken = bearerToken =>
-  db.hgetallAsync(fmt(formats.accessToken, bearerToken)).then(token => {
+  db.getAsync(fmt(formats.accessToken, bearerToken)).then(token => {
     if (!token) {
       return;
     }
 
+    token = JSON.parse(token);
     token.accessTokenExpiresAt = new Date(token.accessTokenExpiresAt);
     token.refreshTokenExpiresAt = new Date(token.refreshTokenExpiresAt);
     token.user = JSON.parse(token.user);
@@ -61,14 +62,16 @@ module.exports.getClient = (clientId, clientSecret) =>
  */
 
 module.exports.getRefreshToken = bearerToken =>
-  db.hgetallAsync(fmt(formats.refreshToken, bearerToken)).then(token => {
+  db.getAsync(fmt(formats.refreshToken, bearerToken)).then(token => {
     if (!token) {
       return;
     }
 
+    token = JSON.parse(token);
     token.refreshTokenExpiresAt = new Date(token.refreshTokenExpiresAt);
     token.user = JSON.parse(token.user);
     token.client = JSON.parse(token.client);
+
     return token;
   });
 
@@ -77,10 +80,12 @@ module.exports.getRefreshToken = bearerToken =>
  */
 
 module.exports.revokeToken = token =>
-  Promise.all([
-    db.delAsync(fmt(formats.accessToken, token.accessToken)),
-    db.delAsync(fmt(formats.refreshToken, token.refreshToken))
-  ]).then(() => true);
+  db
+    .delAsync([
+      fmt(formats.accessToken, token.accessToken),
+      fmt(formats.refreshToken, token.refreshToken)
+    ])
+    .then(() => true);
 
 /**
  * Get user.
@@ -114,7 +119,19 @@ module.exports.saveToken = (token, client, user) => {
   };
 
   return Promise.all([
-    db.hmsetAsync(fmt(formats.accessToken, token.accessToken), data),
-    db.hmsetAsync(fmt(formats.refreshToken, token.refreshToken), data)
+    db.setexAsync(
+      fmt(formats.accessToken, token.accessToken),
+      Math.ceil(
+        (data.accessTokenExpiresAt.getTime() - new Date().getTime()) / 1000
+      ),
+      JSON.stringify(data)
+    ),
+    db.setexAsync(
+      fmt(formats.refreshToken, token.refreshToken),
+      Math.ceil(
+        (data.refreshTokenExpiresAt.getTime() - new Date().getTime()) / 1000
+      ),
+      JSON.stringify(data)
+    )
   ]).then(() => data);
 };
