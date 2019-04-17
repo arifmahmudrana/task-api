@@ -7,6 +7,9 @@
     "start": "node src/app.js",
     "dev": "env-cmd ./.env nodemon src/app.js",
     "debug": "env-cmd ./.env nodemon --inspect-brk src/app.js",
+    "create_client": "env-cmd ./.env node bin/create_client",
+    "clear_tokens": "env-cmd ./.env node bin/clear_tokens",
+    "debug_clear_tokens": "env-cmd ./.env nodemon --inspect-brk bin/clear_tokens",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
