@@ -6,520 +6,541 @@
 	},
 	"item": [
 		{
-			"name": "User Register",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"email\": \"arif@furqansoftware.com\",\n\t\"password\": \"AyNa@6*(\"\n}"
-				},
-				"url": {
-					"raw": "{{HOST}}/api/v1/register",
-					"host": [
-						"{{HOST}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"register"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Access token generate",
-			"event": [
+			"name": "AUTH",
+			"item": [
 				{
-					"listen": "test",
-					"script": {
-						"id": "5fea23fe-1ac7-4e2c-9a9f-9396e60abe29",
-						"exec": [
-							"if (pm.response.code === 200) {",
-							"    pm.environment.set('ACCESS_TOKEN', pm.response.json().access_token)",
-							"    pm.environment.set('REFRESH_TOKEN', pm.response.json().refresh_token)",
-							"}"
+					"name": "User Register",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
 						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/x-www-form-urlencoded",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "username",
-							"value": "arif@furqansoftware.com",
-							"type": "text"
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"{{EMAIL}}\",\n\t\"password\": \"{{PASSWORD}}\"\n}"
 						},
-						{
-							"key": "password",
-							"value": "AYNa@6*(",
-							"type": "text"
-						},
-						{
-							"key": "client_id",
-							"value": "{{CLIENT_ID}}",
-							"type": "text"
-						},
-						{
-							"key": "client_secret",
-							"value": "{{CLIENT_SECRET}}",
-							"type": "text"
-						},
-						{
-							"key": "grant_type",
-							"value": "password",
-							"type": "text"
+						"url": {
+							"raw": "{{HOST}}/api/v1/register",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"register"
+							]
 						}
-					]
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{HOST}}/oauth/token",
-					"host": [
-						"{{HOST}}"
-					],
-					"path": [
-						"oauth",
-						"token"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Refresh token generate",
-			"event": [
 				{
-					"listen": "test",
-					"script": {
-						"id": "5fea23fe-1ac7-4e2c-9a9f-9396e60abe29",
-						"exec": [
-							"if (pm.response.code === 200) {",
-							"    pm.environment.set('ACCESS_TOKEN', pm.response.json().access_token)",
-							"    pm.environment.set('REFRESH_TOKEN', pm.response.json().refresh_token)",
-							"}"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/x-www-form-urlencoded"
-					}
-				],
-				"body": {
-					"mode": "urlencoded",
-					"urlencoded": [
+					"name": "Access token generate",
+					"event": [
 						{
-							"key": "client_id",
-							"value": "{{CLIENT_ID}}",
-							"type": "text"
-						},
-						{
-							"key": "client_secret",
-							"value": "{{CLIENT_SECRET}}",
-							"type": "text"
-						},
-						{
-							"key": "refresh_token",
-							"value": "{{REFRESH_TOKEN}}",
-							"type": "text"
-						},
-						{
-							"key": "grant_type",
-							"value": "refresh_token",
-							"type": "text"
+							"listen": "test",
+							"script": {
+								"id": "5fea23fe-1ac7-4e2c-9a9f-9396e60abe29",
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    pm.environment.set('ACCESS_TOKEN', pm.response.json().access_token)",
+									"    pm.environment.set('REFRESH_TOKEN', pm.response.json().refresh_token)",
+									"}"
+								],
+								"type": "text/javascript"
+							}
 						}
-					]
-				},
-				"url": {
-					"raw": "{{HOST}}/oauth/token",
-					"host": [
-						"{{HOST}}"
 					],
-					"path": [
-						"oauth",
-						"token"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Verify Account",
-			"request": {
-				"auth": {
-					"type": "noauth"
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "{{EMAIL}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{PASSWORD}}",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "{{RESET_PASSWORD}}",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "{{CLIENT_ID}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{CLIENT_SECRET}}",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{HOST}}/oauth/token",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"oauth",
+								"token"
+							]
+						}
+					},
+					"response": []
 				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "{{HOST}}/api/v1/verify/nFcPVddTLzy1ZkLZpUpHDdvqQvFUWWHSCvvwATVSNUeuSy2y",
-					"host": [
-						"{{HOST}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"verify",
-						"nFcPVddTLzy1ZkLZpUpHDdvqQvFUWWHSCvvwATVSNUeuSy2y"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "User resend verification",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"email\": \"arif@furqansoftware.com\"\n}"
-				},
-				"url": {
-					"raw": "{{HOST}}/api/v1/resend-verify",
-					"host": [
-						"{{HOST}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"resend-verify"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "User send password reset link",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"email\": \"arif@furqansoftware.com\"\n}"
-				},
-				"url": {
-					"raw": "{{HOST}}/api/v1/send-reset-password",
-					"host": [
-						"{{HOST}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"send-reset-password"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "User reset password",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"password\": \"AYNa@6*(\"\n}"
-				},
-				"url": {
-					"raw": "{{HOST}}/api/v1/reset-password/Ac5iFShwZUVbLjhaVyVOeM1qiUmA2LeZtwkNve5SypgINoYZ",
-					"host": [
-						"{{HOST}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"reset-password",
-						"Ac5iFShwZUVbLjhaVyVOeM1qiUmA2LeZtwkNve5SypgINoYZ"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get user information",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "{{HOST}}/api/v1/me",
-					"host": [
-						"{{HOST}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"me"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "User task create",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"title\": \"Go to office\",\n\t\"description\": \"Will go to office on next Sunday\"\n}"
-				},
-				"url": {
-					"raw": "{{HOST}}/api/v1/tasks",
-					"host": [
-						"{{HOST}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"tasks"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get user tasks",
-			"event": [
 				{
-					"listen": "test",
-					"script": {
-						"id": "0e07e239-3fb4-48f5-9b29-7da34770a566",
-						"exec": [
-							"if (pm.response.code === 200) {",
-							"    const tasks = pm.response.json().tasks;",
-							"    if (tasks.length > 0) {",
-							"        pm.environment.set('TASK_ID', tasks[0].id);",
-							"    }",
-							"}"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/x-www-form-urlencoded",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "{{HOST}}/api/v1/tasks?",
-					"host": [
-						"{{HOST}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"tasks"
-					],
-					"query": [
+					"name": "Refresh token generate",
+					"event": [
 						{
-							"key": "page",
-							"value": "1",
-							"disabled": true
-						},
-						{
-							"key": "q",
-							"value": "office",
-							"disabled": true
-						},
-						{
-							"key": "done",
-							"value": "true",
-							"disabled": true
-						},
-						{
-							"key": "orderBy",
-							"value": "desc",
-							"disabled": true
+							"listen": "test",
+							"script": {
+								"id": "5fea23fe-1ac7-4e2c-9a9f-9396e60abe29",
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    pm.environment.set('ACCESS_TOKEN', pm.response.json().access_token)",
+									"    pm.environment.set('REFRESH_TOKEN', pm.response.json().refresh_token)",
+									"}"
+								],
+								"type": "text/javascript"
+							}
 						}
-					]
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client_id",
+									"value": "{{CLIENT_ID}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{CLIENT_SECRET}}",
+									"type": "text"
+								},
+								{
+									"key": "refresh_token",
+									"value": "{{REFRESH_TOKEN}}",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "refresh_token",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{HOST}}/oauth/token",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"oauth",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Account",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/verify/{{ACCOUNT_VERIFY_TOKEN}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"verify",
+								"{{ACCOUNT_VERIFY_TOKEN}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User resend verification",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"{{EMAIL}}\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/resend-verify",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"resend-verify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User send password reset link",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"{{EMAIL}}\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/send-reset-password",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"send-reset-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User reset password",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"password\": \"{{RESET_PASSWORD}}\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/reset-password/{{RESET_PASSWORD_TOKEN}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reset-password",
+								"{{RESET_PASSWORD_TOKEN}}"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Get user task",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
+			"name": "Task",
+			"item": [
+				{
+					"name": "User task create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"title\": \"Go to office\",\n\t\"description\": \"Will go to office on next Sunday\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/tasks",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tasks"
+							]
+						}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{HOST}}/api/v1/tasks/{{TASK_ID}}",
-					"host": [
-						"{{HOST}}"
+				{
+					"name": "Get user tasks",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0e07e239-3fb4-48f5-9b29-7da34770a566",
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const tasks = pm.response.json().tasks;",
+									"    if (tasks.length > 0) {",
+									"        pm.environment.set('TASK_ID', tasks[0].id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
 					],
-					"path": [
-						"api",
-						"v1",
-						"tasks",
-						"{{TASK_ID}}"
-					]
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/tasks?",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "q",
+									"value": "office",
+									"disabled": true
+								},
+								{
+									"key": "done",
+									"value": "true",
+									"disabled": true
+								},
+								{
+									"key": "orderBy",
+									"value": "desc",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user task",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/tasks/{{TASK_ID}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tasks",
+								"{{TASK_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user task",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"title\": \"Go to office\",\n\t\"description\": \"Will go to office on Tuesday\",\n\t\"done\": true\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/tasks/{{TASK_ID}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tasks",
+								"{{TASK_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user task",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/tasks/{{TASK_ID}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tasks",
+								"{{TASK_ID}}"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Update user task",
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"title\": \"Go to office\",\n\t\"description\": \"Will go to office on Tuesday\",\n\t\"done\": true\n}"
-				},
-				"url": {
-					"raw": "{{HOST}}/api/v1/tasks/{{TASK_ID}}",
-					"host": [
-						"{{HOST}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"tasks",
-						"{{TASK_ID}}"
-					]
+			"name": "User",
+			"item": [
+				{
+					"name": "Get user information",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/me",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"me"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete user task",
-			"request": {
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "{{HOST}}/api/v1/tasks/{{TASK_ID}}",
-					"host": [
-						"{{HOST}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"tasks",
-						"{{TASK_ID}}"
-					]
-				}
-			},
-			"response": []
+			]
 		}
 	],
 	"auth": {
