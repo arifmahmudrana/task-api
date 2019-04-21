@@ -7,6 +7,7 @@ if (process.env.NODE_ENV === 'development') {
 mongoose.set('useCreateIndex', true);
 const express = require('express');
 const cors = require('cors');
+const paginate = require('express-paginate');
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -27,29 +28,40 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const auth = require('./routes/auth');
-const user = require('./routes/user');
-
 const userMiddlewares = require('./middlewares/user');
 
-app.use('/api/v1', auth);
+app.use(paginate.middleware());
+app.use('/api/v1', require('./routes/auth'));
 app.post('/oauth/token', app.oauth.token());
-app.use('/api/v1/me', app.oauth.authenticate(), userMiddlewares.findById, user);
+
+app.use(
+  '/api/v1/me',
+  app.oauth.authenticate(),
+  userMiddlewares.findById,
+  require('./routes/user')
+);
+app.use(
+  '/api/v1/tasks',
+  app.oauth.authenticate(),
+  userMiddlewares.findById,
+  require('./routes/task')
+);
 
 app.use((req, res, next) => {
   next(require('./utils/err')('Not Found', 404));
 });
 
 app.use((err, req, res, next) => {
+  err.status = err.code || err.status || 500;
   if (process.env.NODE_ENV === 'development') {
     console.log('====================================');
     console.log(err);
     console.log('====================================');
   }
 
-  res.status(err.status || 500);
+  res.status(err.status);
 
-  if (err instanceof UnauthorizedRequestError) {
+  if (err instanceof UnauthorizedRequestError || err.status === 401) {
     return res.send();
   }
 
