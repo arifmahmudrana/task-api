@@ -9,7 +9,6 @@ const fields = {
     unique: true,
     required: [true, 'Email is required'],
     trim: true,
-    lowercase: true,
     validate(value) {
       if (!validator.isEmail(value)) {
         throw new Error('Email is invalid');
@@ -21,23 +20,9 @@ const fields = {
     required: [true, 'Password is required'],
     minlength: [7, 'Password length must be greater then 7 character'],
     match: [
-      /^(?=.*[A-Z])(?=.*[0-9])/,
-      'Password must include a number & capital letter'
-    ],
-    validate(value) {
-      const spChar = ' !"#$%&\'()*+,-./:;<=>?@[]^_`{|}~';
-      let found = false;
-      for (let i = 0; i < spChar.length; i++) {
-        const elem = spChar[i];
-        if (value.includes(elem)) {
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        throw new Error('Password must include a special character');
-      }
-    }
+      /^(?=.*[A-Z])(?=.*[0-9])(?=.*[\s\!"#\$%&\\'\(\)\*\+,\-\.\/\:;\<\=\>\?@\[\]\^_`\{\|\}~])/,
+      'Password must include a number, a capital letter & a special character'
+    ]
   },
   verified: {
     type: Boolean,
@@ -63,6 +48,17 @@ const fields = {
   }
 };
 const userSchema = new Schema(fields);
+userSchema.virtual('tasks', {
+  ref: 'Task',
+  localField: '_id',
+  foreignField: 'user'
+});
+userSchema.virtual('taskCount', {
+  ref: 'Task',
+  localField: '_id',
+  foreignField: 'user',
+  count: true
+});
 /* userSchema.methods.toJSON = function() {
   const userObject = this.toObject();
 

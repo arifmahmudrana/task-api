@@ -142,7 +142,7 @@ router.post(
   }
 );
 
-router.put('/reset-password/:token', async (req, res, next) => {
+const resetPassword = async (req, res, next) => {
   const user = await User.findByResetToken(req.params.token);
 
   try {
@@ -159,6 +159,10 @@ router.put('/reset-password/:token', async (req, res, next) => {
   } catch (error) {
     next(formatValidationErrors(error));
   }
-});
+};
+router
+  .route('/reset-password/:token')
+  .put(resetPassword)
+  .patch(resetPassword);
 
 module.exports = router;

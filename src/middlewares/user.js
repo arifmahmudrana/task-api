@@ -9,7 +9,7 @@ const findById = async (req, res, next) => {
       req.user = user;
       next();
     } else {
-      throw customErr('Not Found', 404);
+      throw customErr('', 401);
     }
   } catch (error) {
     next(error);
