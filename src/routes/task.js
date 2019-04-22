@@ -92,7 +92,9 @@ router.get('/', async (req, res, next) => {
     })
     .execPopulate();
   const pageCount = Math.ceil(req.user.taskCount / req.query.limit);
-  const pagination = paginate(req, pageCount);
+  const newReq = { query: req.query, originalUrl: req.originalUrl };
+  delete newReq.query.limit;
+  const pagination = paginate(newReq, pageCount);
 
   await req.user
     .populate({
