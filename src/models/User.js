@@ -81,7 +81,7 @@ userSchema.statics.findByCredentials = async function(email, password) {
     return false;
   }
 
-  const matched = await bcrypt.compare(password, user.password);
+  const matched = await user.passwordMatched(password);
 
   if (!matched) {
     return false;
@@ -108,6 +108,12 @@ userSchema.methods.setVerified = function() {
   this.verified = true;
   this.verifyToken = null;
   this.verifyTokenExpires = null;
+};
+
+userSchema.methods.passwordMatched = async function(password) {
+  const matched = await bcrypt.compare(password, this.password);
+
+  return matched;
 };
 
 // Hash the plain text password before saving

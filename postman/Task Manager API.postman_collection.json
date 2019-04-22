@@ -539,6 +539,53 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "User change password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "125cb671-cb95-4964-9224-fed35596fd44",
+								"exec": [
+									"",
+									"if (pm.response.code === 200) {",
+									"    const reset = pm.environment.get('RESET_PASSWORD');",
+									"    pm.environment.set('RESET_PASSWORD', pm.environment.get('PASSWORD'))",
+									"    pm.environment.set('PASSWORD', reset)",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"password\": \"{{RESET_PASSWORD}}\",\n\t\"newPassword\": \"{{PASSWORD}}\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/me",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"me"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
