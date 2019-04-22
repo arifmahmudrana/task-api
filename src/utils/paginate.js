@@ -3,16 +3,18 @@ const qs = require('qs');
 const url = require('url');
 
 const getPages = (req, pageCount) => {
-  const pages = paginate
-    .getArrayPages(req)(10, pageCount, req.query.page)
-    .map(({ url }) => url);
+  if (pageCount < 1) {
+    return null;
+  }
 
   return {
     previousPage: previousPage(req),
     firstPage: firstPage(req),
     lastPage: lastPage(req, pageCount),
     nextPage: nextPage(req, pageCount),
-    pages
+    pages: paginate
+      .getArrayPages(req)(10, pageCount, req.query.page)
+      .map(({ url }) => process.env.ROOT_URL + url)
   };
 };
 
@@ -21,19 +23,29 @@ const previousPage = req => {
     return null;
   }
 
-  return paginate.href(req)(true);
+  return process.env.ROOT_URL + paginate.href(req)(true);
 };
 
 const firstPage = req => {
   const query = { ...req.query, page: 1 };
 
-  return url.parse(req.originalUrl).pathname + '?' + qs.stringify(query);
+  return (
+    process.env.ROOT_URL +
+    url.parse(req.originalUrl).pathname +
+    '?' +
+    qs.stringify(query)
+  );
 };
 
 const lastPage = (req, pageCount) => {
   const query = { ...req.query, page: pageCount };
 
-  return url.parse(req.originalUrl).pathname + '?' + qs.stringify(query);
+  return (
+    process.env.ROOT_URL +
+    url.parse(req.originalUrl).pathname +
+    '?' +
+    qs.stringify(query)
+  );
 };
 
 const nextPage = (req, pageCount) => {
@@ -41,7 +53,7 @@ const nextPage = (req, pageCount) => {
     return null;
   }
 
-  return paginate.href(req)();
+  return process.env.ROOT_URL + paginate.href(req)();
 };
 
 module.exports = getPages;
