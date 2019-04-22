@@ -42,6 +42,133 @@
 					"response": []
 				},
 				{
+					"name": "User resend verification",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"{{EMAIL}}\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/resend-verify",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"resend-verify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Account",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/verify/{{ACCOUNT_VERIFY_TOKEN}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"verify",
+								"{{ACCOUNT_VERIFY_TOKEN}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User send password reset link",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"{{EMAIL}}\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/send-reset-password",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"send-reset-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User reset password",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"password\": \"{{RESET_PASSWORD}}\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/reset-password/{{RESET_PASSWORD_TOKEN}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reset-password",
+								"{{RESET_PASSWORD_TOKEN}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Access token generate",
 					"event": [
 						{
@@ -183,133 +310,6 @@
 							"path": [
 								"oauth",
 								"token"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Verify Account",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{HOST}}/api/v1/verify/{{ACCOUNT_VERIFY_TOKEN}}",
-							"host": [
-								"{{HOST}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"verify",
-								"{{ACCOUNT_VERIFY_TOKEN}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "User resend verification",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"email\": \"{{EMAIL}}\"\n}"
-						},
-						"url": {
-							"raw": "{{HOST}}/api/v1/resend-verify",
-							"host": [
-								"{{HOST}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"resend-verify"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "User send password reset link",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"email\": \"{{EMAIL}}\"\n}"
-						},
-						"url": {
-							"raw": "{{HOST}}/api/v1/send-reset-password",
-							"host": [
-								"{{HOST}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"send-reset-password"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "User reset password",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"password\": \"{{RESET_PASSWORD}}\"\n}"
-						},
-						"url": {
-							"raw": "{{HOST}}/api/v1/reset-password/{{RESET_PASSWORD_TOKEN}}",
-							"host": [
-								"{{HOST}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"reset-password",
-								"{{RESET_PASSWORD_TOKEN}}"
 							]
 						}
 					},
