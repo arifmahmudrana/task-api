@@ -7,6 +7,10 @@ const { User } = require('../models/User');
 const customErr = require('../utils/err');
 const formatValidationErrors = require('../utils/format-validation-errors');
 const { generateRandomStringURLSafe } = require('../utils/rand');
+const {
+  sendVerificationEmail,
+  sendResetPasswordEmail
+} = require('../mails/mail');
 
 /* router.post(
   '/login',
@@ -49,12 +53,17 @@ const { generateRandomStringURLSafe } = require('../utils/rand');
 
 router.post('/register', async (req, res, next) => {
   try {
-    await new User({
+    const user = await new User({
       ...req.body,
       verifyToken: generateRandomStringURLSafe(48)
     }).save();
 
     res.status(201).send();
+
+    sendVerificationEmail(
+      user.email,
+      `${process.env.ROOT_URL}/api/v1/verify/${user.verifyToken}`
+    );
   } catch (error) {
     next(formatValidationErrors(error));
   }
@@ -97,9 +106,14 @@ router.post(
     try {
       if (user) {
         user.verifyToken = generateRandomStringURLSafe(48);
-
         await user.save();
+
         res.send();
+
+        sendVerificationEmail(
+          user.email,
+          `${process.env.ROOT_URL}/api/v1/verify/${user.verifyToken}`
+        );
       } else {
         throw customErr('Not Found', 404);
       }
@@ -133,6 +147,11 @@ router.post(
 
         await user.save();
         res.send();
+
+        sendResetPasswordEmail(
+          user.email,
+          `${process.env.ROOT_URL}/api/v1/verify/${user.reset.token}`
+        );
       } else {
         throw customErr('Not Found', 404);
       }
