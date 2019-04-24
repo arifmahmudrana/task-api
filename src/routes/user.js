@@ -1,9 +1,18 @@
+const aws = require('aws-sdk');
+const multer = require('multer');
+const sharp = require('sharp');
 const express = require('express');
 const router = express.Router();
 
 const customErr = require('../utils/err');
 const { userTransformer } = require('../models/User');
 const formatValidationErrors = require('../utils/format-validation-errors');
+
+aws.config.update({
+  accessKeyId: process.env.ACCESS_KEY_ID,
+  secretAccessKey: process.env.SECRET_ACCESS_KEY
+});
+const s3 = new aws.S3({ params: { Bucket: process.env.S3_BUCKET } });
 
 router.get('/', (req, res) => {
   res.json(userTransformer(req.user));
@@ -48,5 +57,44 @@ router
   .route('/')
   .put(updatePassword)
   .patch(updatePassword);
+
+const upload = multer({
+  limits: {
+    fileSize: 1000000
+  },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+      return cb(customErr('Please upload an image', 422));
+    }
+
+    cb(undefined, true);
+  }
+});
+router.post('/avatar', upload.single('avatar'), async (req, res, next) => {
+  try {
+    if (!req.file) {
+      throw customErr('Avatar file is required', 422);
+    }
+    const buffer = await sharp(req.file.buffer)
+      .resize({ width: 250, height: 250 })
+      .jpeg()
+      .toBuffer();
+
+    const data = await s3
+      .upload({
+        ACL: 'public-read',
+        Key: req.user._id + '/avatar.jpeg',
+        Body: buffer,
+        ContentType: 'image/jpeg'
+      })
+      .promise();
+    req.user.avatar = data.Location;
+    await req.user.save();
+
+    res.send();
+  } catch (error) {
+    next(formatValidationErrors(error));
+  }
+});
 
 module.exports = router;

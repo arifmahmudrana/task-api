@@ -45,6 +45,10 @@ const fields = {
   verifyTokenExpires: {
     type: Date,
     default: null
+  },
+  avatar: {
+    type: String,
+    default: null
   }
 };
 const userSchema = new Schema(fields);
@@ -140,7 +144,8 @@ userSchema.pre('save', async function(next) {
 const userTransformer = user => ({
   id: user._id,
   email: user.email,
-  verified: user.verified
+  verified: user.verified,
+  avatar: user.avatar
 });
 
 const User = mongoose.modelNames().includes('User')
