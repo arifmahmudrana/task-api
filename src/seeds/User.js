@@ -1,17 +1,10 @@
 const bcrypt = require('bcryptjs');
 const faker = require('faker');
-const mongoose = require('mongoose');
-mongoose.set('debug', true);
-mongoose.set('useCreateIndex', true);
+require('../db/mongoose');
 const { User } = require('../models/User');
 
-mongoose
-  .connect(process.env.MONGODB_URI, { useNewUrlParser: true })
-  .then(() =>
-    User.find({}, { email: true }).then(users =>
-      users.map(({ email }) => ({ [email]: true }))
-    )
-  )
+User.find({}, { email: true })
+  .then(users => users.map(({ email }) => ({ [email]: true })))
   .then(emails => {
     const users = [],
       password = bcrypt.hashSync('Abc890)', 8);

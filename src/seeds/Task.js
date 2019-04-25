@@ -1,13 +1,9 @@
 const faker = require('faker');
-const mongoose = require('mongoose');
-mongoose.set('debug', true);
-mongoose.set('useCreateIndex', true);
+require('../db/mongoose');
 const { User } = require('../models/User');
 const { Task } = require('../models/Task');
 
-mongoose
-  .connect(process.env.MONGODB_URI, { useNewUrlParser: true })
-  .then(() => User.find({ verified: true }, { _id: true }))
+User.find({ verified: true }, { _id: true })
   .then(users => {
     if (!users.length) {
       throw new Error('Please add some user first!!');

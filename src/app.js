@@ -1,10 +1,6 @@
 const OAuthServer = require('express-oauth-server');
 const UnauthorizedRequestError = require('oauth2-server/lib/errors/unauthorized-request-error');
-const mongoose = require('mongoose');
-if (process.env.NODE_ENV === 'development') {
-  mongoose.set('debug', true);
-}
-mongoose.set('useCreateIndex', true);
+require('./db/mongoose');
 const express = require('express');
 const cors = require('cors');
 const paginate = require('express-paginate');
@@ -70,20 +66,13 @@ app.use((err, req, res, next) => {
   });
 });
 
-mongoose
-  .connect(process.env.MONGODB_URI, { useNewUrlParser: true })
-  .then(() => {
-    if (!module.parent) {
-      const server = app.listen(port, () => {
-        const addr = server.address();
-        const bind =
-          typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
-        console.log('Listening on ' + bind);
-      });
-    }
-  })
-  .catch(err => {
-    throw err;
+if (!module.parent) {
+  const server = app.listen(port, () => {
+    const addr = server.address();
+    const bind =
+      typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+    console.log('Listening on ' + bind);
   });
+}
 
 module.exports = app;
