@@ -1,10 +1,7 @@
 #!/usr/bin/env node
-const redis = require('redis');
 const fmt = require('util').format;
-const bluebird = require('bluebird');
 
-bluebird.promisifyAll(redis);
-const db = redis.createClient(process.env.REDIS_URL);
+const db = require('../src/redis/db');
 const { formats } = require('../src/models/OAuth');
 
 let accessTokenKeys = [];

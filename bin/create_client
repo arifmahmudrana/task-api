@@ -5,24 +5,18 @@ const rand = require('../src/utils/rand');
 const clientId = rand.generateRandomStringURLSafe(16);
 const clientSecret = rand.generateRandomString(32);
 
-require('redis')
-  .createClient(process.env.REDIS_URL)
-  .hmset(
-    fmt('clients:%s', clientId),
-    {
-      clientId,
-      clientSecret
-    },
-    errs => {
-      if (errs) {
-        console.error(errs[0].message);
-
-        return process.exit(1);
-      }
-
-      console.log('Client added successfully');
-      console.log(fmt('clientId = "%s"', clientId));
-      console.log(fmt('clientSecret = "%s"', clientSecret));
-      process.exit();
-    }
-  );
+require('../src/redis/db')
+  .hmsetAsync(fmt('clients:%s', clientId), {
+    clientId,
+    clientSecret
+  })
+  .then(() => {
+    console.log('Client added successfully');
+    console.log(fmt('clientId = "%s"', clientId));
+    console.log(fmt('clientSecret = "%s"', clientSecret));
+    process.exit();
+  })
+  .catch(errs => {
+    console.error(errs[0].message);
+    process.exit(1);
+  });

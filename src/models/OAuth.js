@@ -2,10 +2,7 @@
  * Module dependencies.
  */
 
-const redis = require('redis');
-const bluebird = require('bluebird');
-bluebird.promisifyAll(redis);
-const db = redis.createClient(process.env.REDIS_URL);
+const db = require('../redis/db');
 const fmt = require('util').format;
 const { User } = require('./User');
 
