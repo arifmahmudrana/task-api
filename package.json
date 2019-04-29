@@ -2,18 +2,14 @@
   "name": "task-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
     "dev": "env-cmd ./.env nodemon src/app.js",
     "debug": "env-cmd ./.env nodemon --inspect-brk src/app.js",
-    "create_client": "env-cmd ./.env node bin/create_client",
-    "clear_tokens": "env-cmd ./.env node bin/clear_tokens",
-    "debug_clear_tokens": "env-cmd ./.env nodemon --inspect-brk bin/clear_tokens",
-    "seed_user": "env-cmd ./.env node src/seeds/User.js",
-    "debug_seed_user": "env-cmd ./.env nodemon --inspect-brk src/seeds/User.js",
-    "seed_task": "env-cmd ./.env node src/seeds/Task.js",
-    "debug_seed_task": "env-cmd ./.env nodemon --inspect-brk src/seeds/Task.js",
+    "create_client": "npm run cli client create",
+    "clear_tokens": "npm run cli token delete --access --refresh --expired",
+    "cli": "env-cmd ./.env node bin/cli",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -36,13 +32,16 @@
     "redis": "^2.8.0",
     "sharp": "^0.22.0",
     "url": "^0.11.0",
-    "validator": "^10.11.0"
+    "validator": "^10.11.0",
+    "yargonaut": "^1.1.4",
+    "yargs": "^13.2.2"
   },
   "devDependencies": {
     "env-cmd": "^8.0.2",
     "faker": "^4.1.0",
     "nodemon": "^1.18.11"
   },
+  "bin": "./bin/cli",
   "engines": {
     "node": "^11.0.0"
   }

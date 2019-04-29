@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 const randomStringLetters =
   '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-~!@#$%^&*()+={}[]\\|;:\'",<.>/?';
 
@@ -16,7 +18,7 @@ const generateRandomString = (length, letters = '') => {
     );
   }
 
-  const randomBytes = require('crypto').randomBytes(length),
+  const randomBytes = crypto.randomBytes(length),
     result = new Array(length),
     charsLength = letters.length;
 

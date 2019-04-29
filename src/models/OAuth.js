@@ -5,6 +5,7 @@
 const db = require('../redis/db');
 const fmt = require('util').format;
 const { User } = require('./User');
+const rand = require('../utils/rand');
 
 /**
  * Redis formats.
@@ -17,6 +18,13 @@ const formats = {
 };
 
 module.exports.formats = formats;
+
+/**
+ * Generate access token.
+ */
+
+module.exports.generateAccessToken = (client, user, scope) =>
+  rand.generateRandomStringURLSafe(40);
 
 /**
  * Get access token.
@@ -41,9 +49,9 @@ module.exports.getAccessToken = bearerToken =>
  * Get client.
  */
 
-module.exports.getClient = (clientId, clientSecret) =>
+module.exports.getClientById = clientId =>
   db.hgetallAsync(fmt(formats.client, clientId)).then(client => {
-    if (!client || client.clientSecret !== clientSecret) {
+    if (!client) {
       return;
     }
 
@@ -53,6 +61,26 @@ module.exports.getClient = (clientId, clientSecret) =>
       grants: ['password', 'refresh_token']
     };
   });
+
+/**
+ * Get client.
+ */
+
+module.exports.getClient = (clientId, clientSecret) =>
+  module.exports.getClientById(clientId).then(client => {
+    if (!client || client.clientSecret !== clientSecret) {
+      return;
+    }
+
+    return client;
+  });
+
+/**
+ * Generate refresh token.
+ */
+
+module.exports.generateRefreshToken = (client, user, scope) =>
+  rand.generateRandomStringURLSafe(40);
 
 /**
  * Get refresh token.

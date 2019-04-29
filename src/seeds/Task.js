@@ -1,16 +1,15 @@
 const faker = require('faker');
-require('../db/mongoose');
 const { User } = require('../models/User');
 const { Task } = require('../models/Task');
 
-User.find({ verified: true }, { _id: true })
-  .then(users => {
+module.exports = async count =>
+  User.find({ verified: true }, { _id: true }).then(users => {
     if (!users.length) {
       throw new Error('Please add some user first!!');
     }
 
     const tasks = [];
-    let count = parseInt(process.argv[2], 10);
+    count = parseInt(count, 10);
     if (count < 0) {
       count = 20;
     }
@@ -34,14 +33,4 @@ User.find({ verified: true }, { _id: true })
     }
 
     return Task.insertMany(tasks);
-  })
-  .then(tasks => {
-    console.log('Tasks inserted successfully');
-
-    process.exit(0);
-  })
-  .catch(err => {
-    console.log('Error occured: ', err);
-
-    process.exit(1);
   });
