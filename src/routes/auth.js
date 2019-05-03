@@ -1,8 +1,6 @@
 const validator = require('validator');
-// const bcrypt = require('bcryptjs');
 const express = require('express');
 const router = express.Router();
-// const { User, userTransformer } = require('../models/User');
 const { User } = require('../models/User');
 const customErr = require('../utils/err');
 const formatValidationErrors = require('../utils/format-validation-errors');
@@ -11,45 +9,6 @@ const {
   sendVerificationEmail,
   sendResetPasswordEmail
 } = require('../mails/mail');
-
-/* router.post(
-  '/login',
-  (req, res, next) => {
-    if (!req.body.email) {
-      return next(customErr('Email is required', 422));
-    }
-    if (!req.body.password) {
-      return next(customErr('Password is required', 422));
-    }
-    if (!validator.isEmail(req.body.email)) {
-      return next(customErr('Email is invalid', 422));
-    }
-
-    next();
-  },
-  async (req, res, next) => {
-    try {
-      const user = await User.findOne({
-        email: req.body.email,
-        verified: true
-      });
-      if (user) {
-        const matched = await bcrypt.compare(
-          req.body.password,
-          user.password.toString()
-        );
-        if (!matched) {
-          throw customErr('Credentials not matched', 404);
-        }
-        res.json(userTransformer(user));
-      } else {
-        throw customErr('Credentials not matched', 404);
-      }
-    } catch (error) {
-      next(error);
-    }
-  }
-); */
 
 router.post('/register', async (req, res, next) => {
   try {

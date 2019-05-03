@@ -1,4 +1,3 @@
-const aws = require('aws-sdk');
 const multer = require('multer');
 const sharp = require('sharp');
 const express = require('express');
@@ -7,12 +6,7 @@ const router = express.Router();
 const customErr = require('../utils/err');
 const { userTransformer } = require('../models/User');
 const formatValidationErrors = require('../utils/format-validation-errors');
-
-aws.config.update({
-  accessKeyId: process.env.ACCESS_KEY_ID,
-  secretAccessKey: process.env.SECRET_ACCESS_KEY
-});
-const s3 = new aws.S3({ params: { Bucket: process.env.S3_BUCKET } });
+const s3 = require('../aws/s3');
 
 router.get('/', (req, res) => {
   res.json(userTransformer(req.user));

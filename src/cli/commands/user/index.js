@@ -2,13 +2,13 @@ const yargonaut = require('yargonaut');
 const chalk = yargonaut.chalk();
 
 module.exports = {
-  command: 'token',
-  desc: 'Oauth token commands',
+  command: 'user',
+  desc: 'User commands',
   builder(yargs) {
     yargs
       .command(require('./list'))
-      .command(require('./create'))
       .command(require('./show'))
+      .command(require('./verify'))
       .command(require('./delete'))
       .demandCommand(
         1,

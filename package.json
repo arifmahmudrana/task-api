@@ -20,6 +20,7 @@
     "aws-sdk": "^2.441.0",
     "bcryptjs": "^2.4.3",
     "bluebird": "^3.5.4",
+    "cli-table3": "^0.5.1",
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "express-oauth-server": "^2.0.0",

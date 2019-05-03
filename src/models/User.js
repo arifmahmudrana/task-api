@@ -3,6 +3,9 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const Schema = mongoose.Schema;
 
+const { Task } = require('./Task');
+const s3 = require('../aws/s3');
+
 const fields = {
   email: {
     type: String,
@@ -63,17 +66,6 @@ userSchema.virtual('taskCount', {
   foreignField: 'user',
   count: true
 });
-/* userSchema.methods.toJSON = function() {
-  const userObject = this.toObject();
-
-  delete userObject.password;
-  delete userObject.reset;
-  delete userObject.verifyToken;
-  delete userObject.verifyTokenExpires;
-  delete userObject.__v;
-
-  return userObject;
-}; */
 
 userSchema.statics.findByCredentials = async function(email, password) {
   const user = await this.findOne({
@@ -92,6 +84,27 @@ userSchema.statics.findByCredentials = async function(email, password) {
   }
 
   return user;
+};
+
+userSchema.statics.verifyMany = function(match) {
+  return this.updateMany(match, {
+    verified: true,
+    verifyToken: null,
+    verifyTokenExpires: null
+  });
+};
+
+userSchema.statics.countUserList = function(match) {
+  return this.countDocuments(match).exec();
+};
+
+userSchema.statics.userList = function(match, skip, limit) {
+  return this.find(
+    match,
+    'email verified verifyToken verifyTokenExpires avatar'
+  )
+    .skip(skip)
+    .limit(limit);
 };
 
 userSchema.statics.findByVerifyToken = function(verifyToken) {
@@ -136,6 +149,22 @@ userSchema.pre('save', async function(next) {
     const expires = new Date();
     expires.setHours(expires.getHours() + 24);
     this.verifyTokenExpires = expires;
+  }
+
+  next();
+});
+
+// Remove user tasks & avatar
+userSchema.pre('remove', async function(next) {
+  await Task.remove({ user: this._id });
+
+  if (this.avatar) {
+    const Key = this.avatar
+      .split('/')
+      .slice(-2)
+      .join('/');
+
+    await s3.deleteObject({ Bucket: process.env.S3_BUCKET, Key }).promise();
   }
 
   next();

@@ -27,17 +27,3 @@ module.exports = async count =>
 
       return User.insertMany(users);
     });
-
-// User.find({}, { email: true })
-//   .then(users => {
-//     console.log('Users inserted successfully');
-
-//     process.exit(0);
-//   })
-//   .catch(err => {
-//     console.log('Error occured: ', err);
-
-//     process.exit(1);
-//   });
-// if (!module.parent) {
-// }
