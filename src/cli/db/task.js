@@ -9,4 +9,12 @@ const list = async (match, skip, limit) => {
   return { totalCount, tasks };
 };
 
-module.exports = { list };
+const get = async match => {
+  const task = await Task.findOne(match, {
+    score: { $meta: 'textScore' }
+  }).sort({ score: { $meta: 'textScore' } });
+
+  return task;
+};
+
+module.exports = { list, get };

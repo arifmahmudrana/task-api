@@ -7,6 +7,7 @@ module.exports = {
   builder(yargs) {
     yargs
       .command(require('./list'))
+      .command(require('./show'))
       .demandCommand(
         1,
         chalk.red.bold('You need at least one command before moving on')
