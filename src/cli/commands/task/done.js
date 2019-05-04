@@ -5,22 +5,23 @@ const chalk = yargonaut.chalk();
 const task = require('../../db/task');
 
 module.exports = {
-  command: 'show',
-  desc: 'Show task details',
+  command: 'done',
+  desc: 'Done/Undone task',
   builder(yargs) {
     yargs
+      .option('done', {
+        describe: `Make done/undone task`,
+        required: true
+      })
       .option('id', {
-        describe: 'Get task by ID'
+        describe: 'Make done/undone task by ID'
       })
       .option('title', {
-        describe: `Get task by title`,
+        describe: `Make done/undone task by title`,
         type: 'string'
       })
-      .option('done', {
-        describe: `Get task by done`
-      })
       .option('user', {
-        describe: 'Get task by user ID',
+        describe: 'Make done/undone task by user ID',
         type: 'string'
       })
       .check(argv => {
@@ -36,27 +37,25 @@ module.exports = {
   },
   handler: async argv => {
     try {
-      const match = {};
+      const match = {},
+        done = [true, 1, 'true'].includes(argv.done);
       if (argv.id) {
         match._id = argv.id;
       }
       if (argv.title) {
         match.$text = { $search: argv.title };
       }
-      if (argv.done !== void 0) {
-        match.done = [true, 1, 'true'].includes(argv.done);
-      }
       if (argv.user) {
         match.user = argv.user;
       }
+      match.done = !done;
 
-      const data = await task.get(match);
-
-      if (data) {
-        console.log(chalk.green(`Task found.`));
-        console.log(JSON.stringify(data, undefined, 2));
+      const { n, nModified } = await task.done(match, done);
+      if (nModified > 0) {
+        console.log(chalk.green(`Task matched: `), n);
+        console.log(chalk.green(`Task modified: `), nModified);
       } else {
-        console.log(chalk.red(`No task found!`));
+        console.log(chalk.red(`No record updated!`));
       }
 
       process.exit(0);

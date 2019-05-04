@@ -34,7 +34,7 @@ module.exports = {
       })
       .check(argv => {
         if (argv.user && !mongoose.Types.ObjectId.isValid(argv.user)) {
-          throw new Error(chalk.red(`Invalid id: "${argv.user}"`));
+          throw new Error(chalk.red(`Invalid user ID: "${argv.user}"`));
         }
         const skip = parseInt(argv.skip, 10);
         if (isNaN(skip) || skip < 0) {

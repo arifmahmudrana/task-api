@@ -5,22 +5,22 @@ const chalk = yargonaut.chalk();
 const task = require('../../db/task');
 
 module.exports = {
-  command: 'show',
-  desc: 'Show task details',
+  command: 'delete',
+  desc: 'Delete task',
   builder(yargs) {
     yargs
       .option('id', {
-        describe: 'Get task by ID'
+        describe: 'Delete task by ID'
       })
       .option('title', {
-        describe: `Get task by title`,
+        describe: `Delete task by title`,
         type: 'string'
       })
       .option('done', {
-        describe: `Get task by done`
+        describe: `Delete task by done`
       })
       .option('user', {
-        describe: 'Get task by user ID',
+        describe: 'Delete task by user ID',
         type: 'string'
       })
       .check(argv => {
@@ -50,14 +50,8 @@ module.exports = {
         match.user = argv.user;
       }
 
-      const data = await task.get(match);
-
-      if (data) {
-        console.log(chalk.green(`Task found.`));
-        console.log(JSON.stringify(data, undefined, 2));
-      } else {
-        console.log(chalk.red(`No task found!`));
-      }
+      await task.delete(match);
+      console.log(chalk.green(`Tasks deleted.`));
 
       process.exit(0);
     } catch (error) {

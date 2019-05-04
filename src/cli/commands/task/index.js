@@ -8,6 +8,8 @@ module.exports = {
     yargs
       .command(require('./list'))
       .command(require('./show'))
+      .command(require('./done'))
+      .command(require('./delete'))
       .demandCommand(
         1,
         chalk.red.bold('You need at least one command before moving on')

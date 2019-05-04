@@ -24,7 +24,7 @@ module.exports = {
       })
       .check(argv => {
         if (argv.id && !mongoose.Types.ObjectId.isValid(argv.id)) {
-          throw new Error(chalk.red(`Invalid id: "${argv.id}"`));
+          throw new Error(chalk.red(`Invalid user ID: "${argv.id}"`));
         }
         if (argv.tokenExpired && !utils.validateDate(argv.tokenExpired)) {
           throw new Error(chalk.red(`Invalid date: "${argv.tokenExpired}"`));

@@ -40,6 +40,10 @@ taskSchema.statics.taskList = function(match, skip, limit) {
     .sort({ score: { $meta: 'textScore' } });
 };
 
+taskSchema.statics.doneMany = function(match, done) {
+  return this.updateMany(match, { done });
+};
+
 const taskTransformer = task => ({
   id: task._id,
   title: task.title,

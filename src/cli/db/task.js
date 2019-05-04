@@ -17,4 +17,14 @@ const get = async match => {
   return task;
 };
 
-module.exports = { list, get };
+const done = async (match, done) => {
+  const result = await Task.doneMany(match, done);
+
+  return result;
+};
+
+const deleteTask = async match => {
+  await Task.deleteMany(match);
+};
+
+module.exports = { list, get, done, delete: deleteTask };
