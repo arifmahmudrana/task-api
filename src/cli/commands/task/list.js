@@ -1,20 +1,26 @@
+const mongoose = require('mongoose');
 const yargonaut = require('yargonaut');
 const chalk = yargonaut.chalk();
 const Table = require('cli-table3');
 
-const user = require('../../db/user');
-const utils = require('./utils');
+const task = require('../../db/task');
 
 module.exports = {
   command: 'list',
-  desc: 'List users',
+  desc: 'List tasks',
   builder(yargs) {
     yargs
-      .option('verified', {
-        describe: 'Get users verified or non verified'
+      .option('title', {
+        describe: `Title of task`,
+        type: 'string'
       })
-      .option('token-expired', {
-        describe: `Get users who's token from time`
+      .option('done', {
+        describe: `Task by done`,
+        type: 'boolean'
+      })
+      .option('user', {
+        describe: 'User ID of tasks',
+        type: 'string'
       })
       .option('skip', {
         describe: `Skip number of results`,
@@ -27,10 +33,9 @@ module.exports = {
         default: 10
       })
       .check(argv => {
-        if (argv.tokenExpired && !utils.validateDate(argv.tokenExpired)) {
-          throw new Error(chalk.red(`Invalid date: "${argv.tokenExpired}"`));
+        if (argv.user && !mongoose.Types.ObjectId.isValid(argv.user)) {
+          throw new Error(chalk.red(`Invalid id: "${argv.user}"`));
         }
-
         const skip = parseInt(argv.skip, 10);
         if (isNaN(skip) || skip < 0) {
           throw new Error(chalk.red(`Invalid skip: "${argv.skip}"`));
@@ -47,25 +52,20 @@ module.exports = {
   handler: async argv => {
     try {
       const match = {};
-      if (argv.verified !== void 0) {
-        match.verified = [true, 1, 'true'].includes(argv.verified);
+      if (argv.title) {
+        match.$text = { $search: argv.title };
       }
-      if (match.verified === false) {
-        match.verifyToken = { $ne: null };
-
-        if (argv.tokenExpired) {
-          match.verifyTokenExpires = {
-            $ne: null,
-            $lte: new Date(argv.tokenExpired)
-          };
-        }
+      if (argv.done !== void 0) {
+        match.done = [true, 1, 'true'].includes(argv.done);
       }
-
+      if (argv.user) {
+        match.user = argv.user;
+      }
       const skip = parseInt(argv.skip, 10),
         limit = parseInt(argv.limit, 10);
-      const { totalCount, users } = await user.list(match, skip, limit);
+      const { totalCount, tasks } = await task.list(match, skip, limit);
 
-      if (totalCount > 0 && users.length > 0) {
+      if (totalCount > 0 && tasks.length > 0) {
         let end = skip + limit;
         if (end > totalCount) {
           end = totalCount;
@@ -74,17 +74,17 @@ module.exports = {
           chalk.green(`Showing results: ${skip}-${end} from ${totalCount}`)
         );
         const table = new Table({
-          head: ['#', 'Verified', 'Token', 'Expires'].map(i => chalk.white(i))
+          head: ['#', 'Title', 'Done', 'User'].map(i => chalk.white(i))
         });
         for (const key in table.options.chars) {
           table.options.chars[key] = chalk.white(table.options.chars[key]);
         }
-        users.forEach(u =>
+        tasks.forEach(t =>
           table.push([
-            u._id.toString(),
-            u.verified ? 'Y' : 'N',
-            u.verifyToken,
-            u.verifyTokenExpires && u.verifyTokenExpires.toString()
+            t._id.toString(),
+            t.title.substr(0, 60),
+            t.done ? 'Y' : 'N',
+            t.user.toString()
           ])
         );
 

@@ -29,6 +29,17 @@ taskSchema.index({ title: 'text' });
 taskSchema.index({ done: 1 });
 taskSchema.index({ createdAt: -1 });
 
+taskSchema.statics.countTaskList = function(match) {
+  return this.countDocuments(match).exec();
+};
+
+taskSchema.statics.taskList = function(match, skip, limit) {
+  return this.find(match, { score: { $meta: 'textScore' } })
+    .skip(skip)
+    .limit(limit)
+    .sort({ score: { $meta: 'textScore' } });
+};
+
 const taskTransformer = task => ({
   id: task._id,
   title: task.title,
