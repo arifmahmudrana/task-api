@@ -1,12 +1,16 @@
 const OAuthServer = require('express-oauth-server');
 const UnauthorizedRequestError = require('oauth2-server/lib/errors/unauthorized-request-error');
-require('./db/mongoose');
+const rateLimit = require('express-rate-limit');
+const RedisStore = require('rate-limit-redis');
 const express = require('express');
 const cors = require('cors');
 const paginate = require('express-paginate');
 
+require('./db/mongoose');
+
 const port = process.env.PORT || 3000;
 const app = express();
+app.enable('trust proxy');
 
 const oAuthOptions = {
   model: require('./models/OAuth'),
@@ -23,6 +27,14 @@ app.oauth = new OAuthServer(oAuthOptions);
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+const limiter = rateLimit({
+  store: new RedisStore({
+    client: require('./redis/db')
+  })
+});
+//  apply to all requests
+app.use(limiter);
 
 const userMiddlewares = require('./middlewares/user');
 
