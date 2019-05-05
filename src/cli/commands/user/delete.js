@@ -67,6 +67,9 @@ module.exports = {
         match.verifyToken = { $ne: null };
 
         if (argv.tokenExpired) {
+          console.log('==================argv.tokenExpired==================');
+          console.log(argv.tokenExpired);
+          console.log('==================argv.tokenExpired==================');
           match.verifyTokenExpires = {
             $ne: null,
             $lte: new Date(argv.tokenExpired)
