@@ -36,9 +36,11 @@ const updateTask = [
       req.task.description = description;
       req.task.done = done;
       await req.task.save();
+      await Promise.all([
+        cacheDel('task-list-' + req.user._id.toString() + '-*'),
+        cacheDel('task-' + req.task._id.toString())
+      ]);
 
-      await cacheDel('task-list-' + req.user._id.toString() + '-*');
-      await cacheDel('task-' + req.task._id.toString());
       res.send();
     } catch (error) {
       next(formatValidationErrors(error));
@@ -56,9 +58,11 @@ router.delete(
   async (req, res, next) => {
     try {
       await req.task.delete();
+      await Promise.all([
+        cacheDel('task-list-' + req.user._id.toString() + '-*'),
+        cacheDel('task-' + req.task._id.toString())
+      ]);
 
-      await cacheDel('task-list-' + req.user._id.toString() + '-*');
-      await cacheDel('task-' + req.task._id.toString());
       res.send();
     } catch (error) {
       next(error);
