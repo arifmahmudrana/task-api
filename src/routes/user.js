@@ -7,10 +7,25 @@ const customErr = require('../utils/err');
 const { userTransformer } = require('../models/User');
 const formatValidationErrors = require('../utils/format-validation-errors');
 const s3 = require('../aws/s3');
+const { cache, cacheDel } = require('../cache');
 
-router.get('/', (req, res) => {
-  res.json(userTransformer(req.user));
-});
+router.get(
+  '/',
+  (req, res, next) => {
+    // set cache name
+    res.express_redis_cache_name = 'user-' + req.user._id.toString();
+    next();
+  },
+  cache.route({
+    expire: {
+      200: 3600,
+      xxx: 0
+    }
+  }),
+  (req, res) => {
+    res.json(userTransformer(req.user));
+  }
+);
 
 const updatePassword = [
   async (req, res, next) => {
@@ -87,6 +102,7 @@ router.post('/avatar', upload.single('avatar'), async (req, res, next) => {
       .promise();
     req.user.avatar = data.Location;
     await req.user.save();
+    await cacheDel('user-' + req.user._id.toString());
 
     res.send();
   } catch (error) {

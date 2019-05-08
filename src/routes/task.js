@@ -5,6 +5,7 @@ const paginate = require('../utils/paginate');
 const { Task, taskTransformer } = require('../models/Task');
 const taskMiddlewares = require('../middlewares/task');
 const formatValidationErrors = require('../utils/format-validation-errors');
+const { cache, cacheDel } = require('../cache');
 
 router.post('/', async (req, res, next) => {
   try {
@@ -14,6 +15,7 @@ router.post('/', async (req, res, next) => {
       user: req.user
     }).save();
 
+    await cacheDel('task-list-' + req.user._id.toString() + '-*');
     res.status(201).send();
   } catch (error) {
     next(formatValidationErrors(error));
@@ -35,6 +37,8 @@ const updateTask = [
       req.task.done = done;
       await req.task.save();
 
+      await cacheDel('task-list-' + req.user._id.toString() + '-*');
+      await cacheDel('task-' + req.task._id.toString());
       res.send();
     } catch (error) {
       next(formatValidationErrors(error));
@@ -53,6 +57,8 @@ router.delete(
     try {
       await req.task.delete();
 
+      await cacheDel('task-list-' + req.user._id.toString() + '-*');
+      await cacheDel('task-' + req.task._id.toString());
       res.send();
     } catch (error) {
       next(error);
@@ -60,45 +66,48 @@ router.delete(
   }
 );
 
-router.get('/:id', taskMiddlewares.findByIdWithUser, (req, res) => {
-  res.json(taskTransformer(req.task));
-});
-
-router.get('/', async (req, res, next) => {
-  const match = {};
-
-  if (req.query.done) {
-    match.done = req.query.done.toLowerCase() === 'true';
+router.get(
+  '/:id',
+  (req, res, next) => {
+    // set cache name
+    res.express_redis_cache_name = 'task-' + req.params.id;
+    next();
+  },
+  cache.route({
+    expire: {
+      200: 3600,
+      xxx: 0
+    }
+  }),
+  taskMiddlewares.findByIdWithUser,
+  (req, res) => {
+    res.json(taskTransformer(req.task));
   }
+);
 
-  if (req.query.q) {
-    match.$text = { $search: req.query.q };
-  }
+router.get(
+  '/',
+  (req, res, next) => {
+    const match = {};
 
-  if (!['title', 'done', 'createdAt'].includes(req.query.sortBy)) {
-    req.query.sortBy = 'createdAt';
-  }
+    if (req.query.done) {
+      match.done = req.query.done.toLowerCase() === 'true';
+    }
 
-  let orderBy = 1;
-  if (req.query.orderBy === 'desc') {
-    orderBy = -1;
-  }
+    if (req.query.q) {
+      match.$text = { $search: req.query.q };
+    }
 
-  await req.user
-    .populate({
-      path: 'taskCount',
-      match,
-      options: {}
-    })
-    .execPopulate();
-  const pageCount = Math.ceil(req.user.taskCount / req.query.limit);
-  const newReq = { query: req.query, originalUrl: req.originalUrl };
-  delete newReq.query.limit;
-  const pagination = paginate(newReq, pageCount);
+    if (!['title', 'done', 'createdAt'].includes(req.query.sortBy)) {
+      req.query.sortBy = 'createdAt';
+    }
 
-  await req.user
-    .populate({
-      path: 'tasks',
+    let orderBy = 1;
+    if (req.query.orderBy === 'desc') {
+      orderBy = -1;
+    }
+
+    req.taskGet = {
       match,
       options: {
         limit: req.query.limit,
@@ -107,13 +116,54 @@ router.get('/', async (req, res, next) => {
           [req.query.sortBy]: orderBy
         }
       }
-    })
-    .execPopulate();
+    };
 
-  res.json({
-    tasks: req.user.tasks.map(task => taskTransformer(task)),
-    pagination
-  });
-});
+    next();
+  },
+  (req, res, next) => {
+    // set cache name
+    res.express_redis_cache_name =
+      'task-list-' +
+      req.user._id.toString() +
+      '-' +
+      JSON.stringify(req.taskGet);
+    next();
+  },
+  cache.route({
+    expire: {
+      200: 3600,
+      xxx: 0
+    }
+  }),
+  async (req, res, next) => {
+    await req.user
+      .populate({
+        path: 'taskCount',
+        match: req.taskGet.match,
+        options: {}
+      })
+      .execPopulate();
+
+    const newReq = { query: req.query, originalUrl: req.originalUrl };
+    delete newReq.query.limit;
+    const pagination = paginate(
+      newReq,
+      Math.ceil(req.user.taskCount / req.query.limit)
+    );
+
+    await req.user
+      .populate({
+        path: 'tasks',
+        match: req.taskGet.match,
+        options: req.taskGet.options
+      })
+      .execPopulate();
+
+    res.json({
+      tasks: req.user.tasks.map(task => taskTransformer(task)),
+      pagination
+    });
+  }
+);
 
 module.exports = router;
