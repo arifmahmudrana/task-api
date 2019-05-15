@@ -17,6 +17,7 @@ yargs
   .command(require('../src/cli/commands/user'))
   .command(require('../src/cli/commands/task'))
   .command(require('../src/cli/commands/seed'))
+  .command(require('../src/cli/commands/cache'))
   .demandCommand(
     1,
     chalk.red.bold('You need at least one command before moving on')
