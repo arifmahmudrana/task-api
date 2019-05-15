@@ -48,12 +48,12 @@ const updateTask = [
   }
 ];
 router
-  .route('/:id')
+  .route('/:id(^[a-f\d]{24}$)')
   .put(updateTask)
   .patch(updateTask);
 
 router.delete(
-  '/:id',
+  '/:id(^[a-f\d]{24}$)',
   taskMiddlewares.findByIdWithUser,
   async (req, res, next) => {
     try {
@@ -71,7 +71,7 @@ router.delete(
 );
 
 router.get(
-  '/:id',
+  '/:id(^[a-f\d]{24}$)',
   (req, res, next) => {
     // set cache name
     res.express_redis_cache_name = 'task-' + req.params.id;

@@ -28,7 +28,7 @@ router.post('/register', async (req, res, next) => {
   }
 });
 
-router.get('/verify/:token', async (req, res, next) => {
+router.get('/verify/:token(^[a-zA-Zd]{48}$)', async (req, res, next) => {
   const user = await User.findByVerifyToken(req.params.token);
 
   try {
