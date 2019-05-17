@@ -28,7 +28,7 @@ router.post('/register', async (req, res, next) => {
   }
 });
 
-router.get('/verify/:token(^[a-zA-Zd]{48}$)', async (req, res, next) => {
+router.get('/verify/:token([a-z0-9]{48})', async (req, res, next) => {
   const user = await User.findByVerifyToken(req.params.token);
 
   try {
@@ -139,7 +139,7 @@ const resetPassword = async (req, res, next) => {
   }
 };
 router
-  .route('/reset-password/:token')
+  .route('/reset-password/:token([a-z0-9]{48})')
   .put(resetPassword)
   .patch(resetPassword);
 

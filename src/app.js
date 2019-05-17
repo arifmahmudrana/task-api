@@ -5,6 +5,7 @@ const RedisStore = require('rate-limit-redis');
 const express = require('express');
 const cors = require('cors');
 const paginate = require('express-paginate');
+const compression = require('compression');
 
 require('./db/mongoose');
 
@@ -25,6 +26,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 app.oauth = new OAuthServer(oAuthOptions);
 app.use(cors());
+app.use(compression()); // compress all responses
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
