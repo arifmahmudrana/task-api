@@ -40,6 +40,12 @@ app.use(limiter);
 
 const userMiddlewares = require('./middlewares/user');
 
+app.use((req, res, next) => {
+  // set default is 10
+  req.query.limit = 10;
+  next();
+});
+
 app.use(paginate.middleware());
 app.use('/api/v1', require('./routes/auth'));
 app.post('/oauth/token', app.oauth.token());
