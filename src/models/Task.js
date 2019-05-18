@@ -48,7 +48,9 @@ const taskTransformer = task => ({
   id: task._id,
   title: task.title,
   description: task.description,
-  done: task.done
+  done: task.done,
+  createdAt: task.createdAt,
+  updatedAt: task.updatedAt
 });
 
 const Task = mongoose.modelNames().includes('Task')
