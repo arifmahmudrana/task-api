@@ -153,7 +153,7 @@ router.get(
       })
       .execPopulate();
 
-    const newReq = { query: req.query, originalUrl: req.originalUrl };
+    const newReq = { query: { ...req.query }, originalUrl: req.originalUrl };
     delete newReq.query.limit;
     const pagination = paginate(
       newReq,
