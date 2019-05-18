@@ -86,10 +86,10 @@ router.get(
   taskMiddlewares.findByIdWithUser,
   (req, res) => {
     res
-      .set({
-        'Cache-Control': 'private, must-revalidate',
-        'Last-Modified': req.task.updatedAt.toUTCString()
-      })
+      // .set({
+      //   'Cache-Control': 'private, must-revalidate',
+      //   'Last-Modified': req.task.updatedAt.toUTCString()
+      // })
       .json(taskTransformer(req.task));
   }
 );
