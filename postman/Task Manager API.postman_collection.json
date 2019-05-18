@@ -82,10 +82,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{HOST}}/api/v1/verify/{{ACCOUNT_VERIFY_TOKEN}}",
 							"host": [
@@ -379,12 +375,8 @@
 								"type": "text"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
-							"raw": "{{HOST}}/api/v1/tasks?",
+							"raw": "{{HOST}}/api/v1/tasks",
 							"host": [
 								"{{HOST}}"
 							],
@@ -410,6 +402,21 @@
 									"disabled": true
 								},
 								{
+									"key": "sortBy",
+									"value": "createdAt",
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": "title",
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": "done",
+									"disabled": true
+								},
+								{
 									"key": "orderBy",
 									"value": "desc",
 									"disabled": true
@@ -423,18 +430,7 @@
 					"name": "Get user task",
 					"request": {
 						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
+						"header": [],
 						"url": {
 							"raw": "{{HOST}}/api/v1/tasks/{{TASK_ID}}",
 							"host": [
@@ -485,18 +481,7 @@
 					"name": "Delete user task",
 					"request": {
 						"method": "DELETE",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
+						"header": [],
 						"url": {
 							"raw": "{{HOST}}/api/v1/tasks/{{TASK_ID}}",
 							"host": [
@@ -522,10 +507,6 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{HOST}}/api/v1/me",
 							"host": [
@@ -582,6 +563,48 @@
 								"api",
 								"v1",
 								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User change avatar",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "125cb671-cb95-4964-9224-fed35596fd44",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/me/avatar",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"me",
+								"avatar"
 							]
 						}
 					},
